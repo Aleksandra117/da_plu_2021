@@ -13,3 +13,16 @@ def method():
 @app.get('/method', status_code=200)
 def method():
 	return {"method": "GET"}
+
+@app.put('/method', status_code=200)
+def method():
+	return {"method": "PUT"}
+
+@app.options('/method', status_code=200)
+def method():
+	return {"method": "OPTIONS"}
+
+@app.delete('/method', status_code=200)
+def method():
+	return {"method": "DELETE"}
+
