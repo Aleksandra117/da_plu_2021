@@ -5,6 +5,7 @@ from datetime import timedelta
 from typing import Optional
 from collections import Counter
 import string
+import hashlib
 
 app = FastAPI()
 app.patient_id = 1
@@ -33,6 +34,13 @@ def method():
 @app.delete('/method', status_code=200)
 def method():
 	return {"method": "DELETE"}
+
+@app.get('/auth', status_code = 204)
+def check_passwd(password, password_hash):
+
+	if password_hash != hashlib.sha512(bytes(password, encoding="ASCII")).hexdigest():
+		raise HTTPException(status_code=401)
+
 
 class Patient(BaseModel):
 	id: Optional[int] = None
