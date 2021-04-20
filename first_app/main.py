@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import datetime
 from datetime import timedelta
@@ -8,6 +8,7 @@ import string
 
 app = FastAPI()
 app.patient_id = 1
+app.patients = []
 
 @app.get("/")
 def root():
@@ -64,5 +65,15 @@ def register_patient(patient: Patient):
 	vac_date = r_date + date_delta
 	s_vac_date = vac_date.strftime("%Y-%m-%d")
 	patient.vaccination_date = s_vac_date
+	app.patients.append(patient)
 
 	return patient 
+
+@app.get('/patient/{patient_id}', status_code=200)
+def patient_view(patient_id):
+	if int(patient_id) < 1:
+		raise HTTPException(status_code = 400)
+	for p in app.patients:
+		if p.id == int(patient_id):
+			return app.patients[p.id-1]
+	raise HTTPException(status_code = 404)
