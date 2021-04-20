@@ -3,6 +3,8 @@ from pydantic import BaseModel
 import datetime
 from datetime import timedelta
 from typing import Optional
+from collections import Counter
+import string
 
 app = FastAPI()
 app.patient_id = 1
@@ -38,6 +40,10 @@ class Patient(BaseModel):
 	register_date: Optional[int] = None
 	vaccination_date: Optional[int] = None
 	
+def count_letters(word, valid_letters=string.ascii_letters):
+    count = Counter(word)
+    return sum(count[letter] for letter in valid_letters)
+
 @app.post('/register', status_code=201)
 def register_patient(patient: Patient):
 	if patient.id is None:
@@ -48,7 +54,7 @@ def register_patient(patient: Patient):
 	sr_date = r_date.strftime("%Y-%m-%d")
 	patient.register_date = sr_date
 
-	ns_length = len(patient.name.replace(" ", ""))+len(patient.surname.replace(" ", ""))
+	ns_length =  count_letters(patient.name) + count_letters(patient.surname)
 	date_delta = timedelta(days=+ns_length)
 	vac_date = r_date + date_delta
 	s_vac_date = vac_date.strftime("%Y-%m-%d")
