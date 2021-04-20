@@ -39,8 +39,13 @@ class Patient(BaseModel):
 	surname:str
 	register_date: Optional[int] = None
 	vaccination_date: Optional[int] = None
+
+polish_letters = ['ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż','Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż']
+all_letters = string.ascii_letters
+for polish_letter in polish_letters:
+	all_letters = all_letters + polish_letter
 	
-def count_letters(word, valid_letters=string.ascii_letters):
+def count_letters(word, valid_letters=all_letters):
     count = Counter(word)
     return sum(count[letter] for letter in valid_letters)
 
