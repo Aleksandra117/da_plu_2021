@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import datetime
 from datetime import timedelta
+from typing import Optional
 
 app = FastAPI()
 app.patient_id = 1
@@ -46,7 +47,7 @@ def register_patient(patient: Patient):
 	r_date = datetime.date.today()
 	sr_date = r_date.strftime("%Y-%m-%d")
 	patient.register_date = sr_date
-	
+
 	ns_length = len(patient.name.replace(" ", ""))+len(patient.surname.replace(" ", ""))
 	date_delta = timedelta(days=+ns_length)
 	vac_date = r_date + date_delta
