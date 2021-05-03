@@ -10,8 +10,6 @@ templates = Jinja2Templates(directory="templates")
 
 login = "4dm1n"
 passwd = "NotSoSecurePa$$"
-app.session_secret_key = "very constatn and random secret, best 64+ characters"
-app.token_secret_key = "another secret also very constant and random and long"
 app.session_token = None
 app.token = None
 
@@ -31,7 +29,7 @@ def read_item(request: Request):
 @app.post("/login_session", status_code=201)
 def logins(user: str, password: str, response: Response):
 	if (login == user and password == passwd):
-		session_token = sha256(f"{user}{password}{app.session_secret_key}".encode()).hexdigest()
+		session_token = sha256(f"{user}{password}".encode()).hexdigest()
 		app.session_token = session_token
 		response.set_cookie(key="session_token", value=session_token)
 	else:
@@ -42,7 +40,7 @@ def logins(user: str, password: str, response: Response):
 @app.post("/login_token", status_code=201)
 def logint(user: str, password: str, response: Response):
 	if (login == user and password == passwd):
-		token_value = sha256(f"{user}{password}{app.token_secret_key}".encode()).hexdigest()
+		token_value = sha256(f"{user}{password}".encode()).hexdigest()
 		app.token = token_value
 		return {"token": token_value}
 	else:
