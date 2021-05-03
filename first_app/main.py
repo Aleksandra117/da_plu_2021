@@ -12,8 +12,8 @@ login = "4dm1n"
 passwd = "NotSoSecurePa$$"
 app.session_secret_key = "very constatn and random secret, best 64+ characters"
 app.token_secret_key = "another secret also very constant and random and long"
-app.session_token = ""
-app.token = ""
+app.session_token = None
+app.token = None
 
 
 
