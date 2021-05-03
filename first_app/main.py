@@ -39,7 +39,7 @@ def logins(user: str, password: str, response: Response):
 
 
 
-@app.post("/login_token")
+@app.post("/login_token", status_code=201)
 def logint(user: str, password: str, response: Response):
 	if (login == user and password == passwd):
 		token_value = sha256(f"{user}{password}{app.token_secret_key}".encode()).hexdigest()
