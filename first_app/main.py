@@ -15,10 +15,8 @@ security = HTTPBasic()
 
 login = "4dm1n"
 passwd = "NotSoSecurePa$$"
-app.session_secret_key = "very constatn and random secret, best 64+ characters"
-app.token_secret_key = "another secret also very constant and random and long"
-app.session_token = ""
-app.token = ""
+app.session_token = []
+app.token = []
 
 
 
@@ -32,15 +30,15 @@ def read_item(request: Request):
 
 
 
-
 @app.post("/login_session", status_code=201)
 def logins(response: Response, credentials: HTTPBasicCredentials = Depends(security)):
 	correct_username = secrets.compare_digest(credentials.username, login)
 	correct_password = secrets.compare_digest(credentials.password, passwd)
 	if (correct_username and correct_password):
-		session_token = sha256(f"{correct_username}{correct_password}{app.session_secret_key}".encode()).hexdigest()
-		#app.access_tokens.append(session_token)
-		app.session_token = session_token
+		session_token = secrets.token_urlsafe(32)
+		if len(app.session_token) == 3:
+			app.session_token.pop(0)
+		app.session_token.append(session_token)
 		response.set_cookie(key="session_token", value=session_token)
 	else:
 		raise HTTPException(status_code=401)
@@ -52,23 +50,24 @@ def logint(credentials: HTTPBasicCredentials = Depends(security)):
 	correct_username = secrets.compare_digest(credentials.username, login)
 	correct_password = secrets.compare_digest(credentials.password, passwd)
 	if (correct_username and correct_password):
-		token_value = sha256(f"{correct_username}{correct_password}{app.token_secret_key}".encode()).hexdigest()
-		app.token = token_value
+		token_value = secrets.token_urlsafe(32)
+		if len(app.token) == 3:
+			app.token.pop(0)
+		app.token.append(token_value)
 		return {"token": token_value}
+
 	else:
 		raise HTTPException(status_code=401)
 
 
-
 @app.get("/welcome_session", status_code = 200)
 def secured_data(response: Response, format: str = "", session_token: str = Cookie(None)):
-	if (session_token != app.session_token):
+	if (session_token not in app.session_token):
 			raise HTTPException(status_code=401)
 	else:
 		if format == "json":
 			data = {"message": "Welcome!"}
 			return data
-#			return Response(content = data, media_type="application/json")
 		elif format == "html":
 			data = """
 			<html>
@@ -89,7 +88,7 @@ def secured_data(response: Response, format: str = "", session_token: str = Cook
 
 @app.get("/welcome_token", status_code=200)
 def secured_data_token(response: Response, format: str = "", token: str = ""):
-	if (token != app.token):
+	if (token not in app.token):
 			raise HTTPException(status_code=401)
 	else:
 		if format == "json":
@@ -112,12 +111,16 @@ def secured_data_token(response: Response, format: str = "", token: str = ""):
 			return Response(content = data, media_type="text/plain")
 	
 
+
+
 @app.delete("/logout_session")
 def logouts(format: str = "", session_token: str = Cookie(None)):
-	if (session_token != app.session_token):
+	if (session_token not in app.session_token):
 			raise HTTPException(status_code=401)
 	else:
-		app.session_token = ""
+		index_session = app.session_token.index(session_token)
+		app.session_token.pop(index_session)
+
 		return RedirectResponse("/logged_out?format="+format, status_code = 303)
 
 
@@ -126,10 +129,12 @@ def logouts(format: str = "", session_token: str = Cookie(None)):
 
 @app.delete("/logout_token")
 def logoutt(format: str = "", token: str = ""):
-	if (token != app.token):
+	if (token not in app.token):
 			raise HTTPException(status_code=401)
 	else:
-		app.token = ""
+		index_token = app.token.index(token)
+		app.token.pop(index_token)
+
 		return RedirectResponse("/logged_out?format="+format, status_code = 303)
 
 
