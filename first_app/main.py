@@ -17,8 +17,8 @@ login = "4dm1n"
 passwd = "NotSoSecurePa$$"
 app.session_secret_key = "very constatn and random secret, best 64+ characters"
 app.token_secret_key = "another secret also very constant and random and long"
-app.session_token = None
-app.token = None
+app.session_token = ""
+app.token = ""
 
 
 
@@ -57,4 +57,58 @@ def logint(credentials: HTTPBasicCredentials = Depends(security)):
 		return {"token": token_value}
 	else:
 		raise HTTPException(status_code=401)
+
+
+
+@app.get("/welcome_session", status_code = 200)
+def secured_data(response: Response, format: str = "", session_token: str = Cookie(None)):
+	if (session_token != app.session_token):
+			raise HTTPException(status_code=401)
+	else:
+		if format == "json":
+			data = {"message": "Welcome!"}
+			return data
+#			return Response(content = data, media_type="application/json")
+		elif format == "html":
+			data = """
+			<html>
+				<head>
+					<title>Some HTML in here</title>
+				</head>
+				<body>
+					<h1>Welcome!</h1>
+				</body>
+			</html>
+			"""
+			return Response(content = data, media_type="text/html")
+		else:
+			data = "Welcome!"
+			return Response(content = data, media_type="text/plain")
+	
+		
+
+@app.get("/welcome_token", status_code=200)
+def secured_data_token(response: Response, format: str = "", token: str = ""):
+	if (token != app.token):
+			raise HTTPException(status_code=401)
+	else:
+		if format == "json":
+			data = {"message": "Welcome!"}
+			return data
+		elif format == "html":
+			data = """
+			<html>
+				<head>
+					<title>Some HTML in here</title>
+				</head>
+				<body>
+					<h1>Welcome!</h1>
+				</body>
+			</html>
+			"""
+			return Response(content = data, media_type="text/html")
+		else:
+			data = "Welcome!"
+			return Response(content = data, media_type="text/plain")
+	
 
