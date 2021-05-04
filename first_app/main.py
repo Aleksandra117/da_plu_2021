@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response, Cookie, HTTPException, Depends, status
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from hashlib import sha256
 
@@ -112,3 +112,45 @@ def secured_data_token(response: Response, format: str = "", token: str = ""):
 			return Response(content = data, media_type="text/plain")
 	
 
+@app.delete("/logout_session")
+def logouts(format: str = "", session_token: str = Cookie(None)):
+	if (session_token != app.session_token):
+			raise HTTPException(status_code=401)
+	else:
+		app.session_token = ""
+		return RedirectResponse("/logged_out?format="+format, status_code = 303)
+
+
+
+
+
+@app.delete("/logout_token")
+def logoutt(format: str = "", token: str = ""):
+	if (token != app.token):
+			raise HTTPException(status_code=401)
+	else:
+		app.token = ""
+		return RedirectResponse("/logged_out?format="+format, status_code = 303)
+
+
+
+
+@app.get("/logged_out", status_code = 200)
+def logged_out_view(response: Response, format :str = ""):
+	if format == "json":
+		return {"message": "Logged out!"}
+	elif format == "html":
+		data = """
+		<html>
+			<head>
+				<title>Some HTML in here</title>
+			</head>
+			<body>
+				<h1>Logged out!</h1>
+			</body>
+		</html>
+		"""
+		return Response(content = data, media_type="text/html")
+	else:
+		data = "Logged out!"
+		return Response(content = data, media_type="text/plain")
