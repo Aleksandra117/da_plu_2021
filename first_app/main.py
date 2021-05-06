@@ -46,3 +46,21 @@ async def single_product(products_id: int):
 
 
 	return {"id": data["ProductID"], "name": data["ProductName"]}
+
+
+
+@app.get("/employees", status_code = 200)
+async def employees_view(limit: int, offset: int, order: str = "EmployeeID"):
+	app.db_connection.row_factory = sqlite3.Row
+	em_limit = limit
+	em_offset = offset
+	em_order = order
+	order_list = ["first_name", "last_name", "city", "EmployeeID"]
+	if em_order not in order_list:
+		raise HTTPException(status_code = 400)
+	if em_order != "EmployeeID":
+		em_order = em_order.title().replace("_", "")
+	data = app.db_connection.execute(
+		f"SELECT EmployeeID, LastName, FirstName, City From Employees ORDER BY {em_order} LIMIT {em_limit} OFFSET {em_offset}").fetchall()
+
+	return {"employees": [{"id": x["EmployeeID"], "last_name": x["LastName"], "first_name": x["FirstName"], "city": x["City"]} for x in data]}
