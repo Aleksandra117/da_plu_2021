@@ -35,7 +35,7 @@ async def customers_view():
 
 
 @app.get("/products/{products_id}")
-async def single_supplier(products_id: int):
+async def single_product(products_id: int):
 	app.db_connection.row_factory = sqlite3.Row
 	data = app.db_connection.execute(
 		"SELECT ProductID, ProductName FROM Products WHERE ProductID = :products_id",
