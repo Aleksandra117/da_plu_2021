@@ -29,7 +29,7 @@ async def categories_view():
 async def customers_view():
 	app.db_connection.row_factory = sqlite3.Row
 	data = app.db_connection.execute(
-		"SELECT CustomerID, CompanyName, Address, PostalCode, City, Country From Customers ORDER BY CustomerID").fetchall()
+		"SELECT CustomerID, CompanyName, Address, PostalCode, City, Country From Customers").fetchall()
 
 	return {"customers": [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in data]}
 
