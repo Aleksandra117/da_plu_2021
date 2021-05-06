@@ -40,8 +40,6 @@ async def single_product(products_id: int):
 	data = app.db_connection.execute(
 		"SELECT ProductID, ProductName FROM Products WHERE ProductID = :products_id",
 		{'products_id': products_id}).fetchone()
-	print(data[1])
-	print(data['ProductName'])
 	
 	if not data:
 		raise HTTPException(status_code = 404)
