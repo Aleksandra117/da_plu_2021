@@ -22,7 +22,7 @@ async def categories_view():
 	data = app.db_connection.execute(
 		"SELECT CategoryID, CategoryName FROM Categories ORDER BY CategoryID").fetchall()
 
-	return [{"id": x['CategoryID'], "name": x["CategoryName"]} for x in data]
+	return {"categories": [{"id": x['CategoryID'], "name": x["CategoryName"]} for x in data]}
 
 
 @app.get("/customers", status_code = 200)
@@ -31,7 +31,7 @@ async def customers_view():
 	data = app.db_connection.execute(
 		"SELECT CustomerID, CompanyName, Address, PostalCode, City, Country From Customers ORDER BY CustomerID").fetchall()
 
-	return [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in data]
+	return {"customers": [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in data]}
 
 
 
