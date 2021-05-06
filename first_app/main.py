@@ -1,5 +1,5 @@
 import sqlite3
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
@@ -34,4 +34,17 @@ async def customers_view():
 	return {"customers": [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in data]}
 
 
+@app.get("/products/{products_id}")
+async def single_supplier(products_id: int):
+	app.db_connection.row_factory = sqlite3.Row
+	data = app.db_connection.execute(
+		"SELECT ProductID, ProductName FROM Products WHERE ProductID = :products_id",
+		{'products_id': products_id}).fetchone()
+	print(data[1])
+	print(data['ProductName'])
+	
+	if not data:
+		raise HTTPException(status_code = 404)
 
+
+	return {"id": data["ProductID"], "name": data["ProductName"]}
