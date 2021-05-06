@@ -50,7 +50,7 @@ async def single_product(products_id: int):
 
 
 @app.get("/employees", status_code = 200)
-async def employees_view(limit: int, offset: int, order: str = "EmployeeID"):
+async def employees_view(limit: int = 0, offset: int = 0, order: str = "EmployeeID"):
 	app.db_connection.row_factory = sqlite3.Row
 	em_limit = limit
 	em_offset = offset
