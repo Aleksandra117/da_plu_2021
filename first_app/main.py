@@ -80,7 +80,7 @@ async def product_view():
 	return {"products_extended": [{"id": x['ProductID'], "name": x["ProductName"], "category": x["CategoryName"], "supplier": x["CompanyName"]} for x in data]}
 
 
-app.get("/products/{id}/orders", status_code=200)
+@app.get("/products/{id}/orders", status_code=200)
 async def orders_view(id: int):
 	app.db_connection.row_factory = sqlite3.Row
 	data = app.db_connection.execute(
