@@ -85,18 +85,36 @@ async def orders_view(id: int):
 	app.db_connection.row_factory = sqlite3.Row
 	data = app.db_connection.execute(
 		"""
-		SELECT Orders.OrderID, Customers.CompanyName, `Order Details`.Quantity, `Order Details`.UnitPrice, `Order Details`.Discount
+		SELECT Orders.OrderID, Customers.CompanyName, 'Order Details'.Quantity, 'Order Details'.UnitPrice, 'Order Details'.Discount
 		FROM Orders JOIN  Customers ON Orders.CustomerID = Customers.CustomerID
-		JOIN `Order Details` ON Orders.OrderID = `Order Details`.OrderID
+		JOIN 'Order Details' ON Orders.OrderID = 'Order Details'.OrderID
 		WHERE Orders.OrderID = :id
 		ORDER BY Orders.OrderID
 		""",
-		{"id": id}).fetchall()
+		{"id": id},
+	).fetchall()
 
 	if not data:
-	    raise HTTPException(status_code=404)
+		raise HTTPException(status_code=404)
+
+	total_price_list = []
+	for x in data:
+		t_price = (x["UnitPrice"] * x["Quantity"]) - (x["Discount"] * (x["UnitPrice"] * x["Quantity"]))
+		total_price = round(t_price,2)
+		total_price_list.append(total_price)
 
 	return {
-		"orders": data
+		"orders": [
+			{
+				"id": x["OrderID"],
+				"customer": x["CompanyName"],
+				"quantity": x["Quantity"],
+				"total_price": total_price_list[i],
+			}
+			for i, x in enumerate(data)
+		]
 	}
+
+
+
 
