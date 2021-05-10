@@ -97,21 +97,15 @@ async def orders_view(id: int):
 	if not data:
 		raise HTTPException(status_code=404)
 
-	total_price_list = []
-	for x in data:
-		t_price = (x["UnitPrice"] * x["Quantity"]) - (x["Discount"] * (x["UnitPrice"] * x["Quantity"]))
-		total_price = round(t_price,2)
-		total_price_list.append(total_price)
-
 	return {
 		"orders": [
 			{
 				"id": x["OrderID"],
 				"customer": x["CompanyName"],
 				"quantity": x["Quantity"],
-				"total_price": total_price_list[i],
+				"total_price": round((x["UnitPrice"]*x["Quantity"])-(x["Discount"]*(x["UnitPrice"]*x["Quantity"])),2)
 			}
-			for i, x in enumerate(data)
+			for x in data
 		]
 	}
 
