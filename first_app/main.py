@@ -88,7 +88,7 @@ async def orders_view(id: int):
 		SELECT Orders.OrderID, Customers.CompanyName, 'Order Details'.Quantity, 'Order Details'.UnitPrice, 'Order Details'.Discount
 		FROM Orders JOIN  Customers ON Orders.CustomerID = Customers.CustomerID
 		JOIN 'Order Details' ON Orders.OrderID = 'Order Details'.OrderID
-		WHERE Orders.OrderID = :id
+		WHERE  'Order Details'.ProductID = :id
 		ORDER BY Orders.OrderID
 		""",
 		{"id": id},
