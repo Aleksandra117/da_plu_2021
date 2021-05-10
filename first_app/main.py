@@ -94,8 +94,8 @@ async def orders_view(id: int):
 		{"id": id},
 	).fetchall()
 
-	if not data:
-		raise HTTPException(status_code=404)
+	# if not data:
+	# 	raise HTTPException(status_code=404)
 
 	return {
 		"orders": [
