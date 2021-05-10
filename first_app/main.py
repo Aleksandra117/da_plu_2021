@@ -100,7 +100,7 @@ async def orders_view(id: int):
 	return {
 		"orders": [
 			{
-				"id": x["OrderID"],
+				"id": x["Orders.OrderID"],
 				"customer": x["CompanyName"],
 				"quantity": x["Quantity"],
 				"total_price": round((x["UnitPrice"]*x["Quantity"])-(x["Discount"]*(x["UnitPrice"]*x["Quantity"])),2)
