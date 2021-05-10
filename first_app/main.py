@@ -29,9 +29,9 @@ async def categories_view():
 async def customers_view():
 	app.db_connection.row_factory = sqlite3.Row
 	data = app.db_connection.execute(
-		"SELECT CustomerID, CompanyName, COALESCE(Address, '') || ' ' || COALESCE(PostalCode, '') || ' ' || COALESCE(City, '') || ' ' || COALESCE(Country, '') From Customers ORDER BY UPPER(CustomerID)").fetchall()
+		"SELECT CustomerID, CompanyName, COALESCE(Address, '') || ' ' || COALESCE(PostalCode, '') || ' ' || COALESCE(City, '') || ' ' || COALESCE(Country, '') AS full_address From Customers ORDER BY UPPER(CustomerID)").fetchall()
 
-	return {"customers": [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": f"{x['Address']} {x['PostalCode']} {x['City']} {x['Country']}"} for x in data]}
+	return {"customers": [{"id": x['CustomerID'], "name": x["CompanyName"], "full_address": x["full_address"]} for x in data]}
 
 
 @app.get("/products/{products_id}")
