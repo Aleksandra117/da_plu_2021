@@ -1,5 +1,6 @@
 import sqlite3
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -116,5 +117,55 @@ async def orders_view(id: int):
 	}
 
 
+class Category(BaseModel):
+    name: str
+
+
+@app.post("/categories", status_code = 201)
+async def categories_add(category: Category):
+    cursor = app.db_connection.execute(
+        "INSERT INTO Categories (CategoryName) VALUES (?)", (category.name, )
+    )
+    app.db_connection.commit()
+    new_category_id = cursor.lastrowid
+    app.db_connection.row_factory = sqlite3.Row
+    category = app.db_connection.execute(
+        """SELECT CategoryID AS category_id, CategoryName AS name
+         FROM Categories WHERE CategoryID = ?""",
+        (new_category_id, )).fetchone()
+
+    return category
+   
+
+@app.put("/categories/{id}", status_code = 200)
+async def categories_update(id: int, category: Category):
+    cursor = app.db_connection.execute(
+        "UPDATE Categories SET CategoryName = ? WHERE CategoryID = ?", (
+            category.name, id)
+    )
+    app.db_connection.commit()
+
+    app.db_connection.row_factory = sqlite3.Row
+    data = app.db_connection.execute(
+        """SELECT CategoryID AS id, CategoryName AS name
+         FROM Categories WHERE CategoryID = ?""",
+        (id, )).fetchone()
+
+    if not data:
+        raise HTTPException(status_code = 404)
+
+    return data
+    
+
+@app.delete("/categories/{id}", status_code = 200)
+async def category_delete(id: int):
+    cursor = app.db_connection.execute(
+        "DELETE FROM Categories WHERE CategoryID = ?", (id, )
+    )
+    app.db_connection.commit()
+
+    if cursor.rowcount < 1:
+        raise HTTPException(status_code = 404)
+    return {"deleted": cursor.rowcount}
 
 
