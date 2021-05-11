@@ -130,7 +130,7 @@ async def categories_add(category: Category):
     new_category_id = cursor.lastrowid
     app.db_connection.row_factory = sqlite3.Row
     category = app.db_connection.execute(
-        """SELECT CategoryID AS category_id, CategoryName AS name
+        """SELECT CategoryID AS id, CategoryName AS name
          FROM Categories WHERE CategoryID = ?""",
         (new_category_id, )).fetchone()
 
