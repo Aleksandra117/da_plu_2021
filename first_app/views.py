@@ -34,3 +34,17 @@ async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
     if db_supplier is None:
         raise HTTPException(status_code=404)
     return db_supplier
+
+
+@router.get("/suppliers/{supplier_id}/products", response_model=List[schemas.SupplierWithProduct], status_code=200)
+async def get_supplier_and_products(supplier_id: PositiveInt, db: Session=Depends(get_db)):
+    db_supplier = crud.get_supplier_and_products(db, supplier_id)
+    if db_supplier is None:
+        raise HTTPException(status_code=404)
+    return db_supplier
+
+
+@router.get("/categories", response_model = List[schemas.Category], status_code = 200)
+async def get_categories(db: Session = Depends(get_db)):
+    return crud.get_categories(db)
+

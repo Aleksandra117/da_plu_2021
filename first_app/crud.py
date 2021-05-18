@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 import models
 
@@ -19,3 +20,12 @@ def get_supplier(db: Session, supplier_id: int):
     return (        
         db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id).first()
     )
+
+def get_supplier_and_products(db: Session, supplier_id: int):
+	return (
+		db.query(models.Product).filter(models.Product.SupplierID == supplier_id).order_by(desc(models.Product.ProductID)).all()
+	)
+
+def get_categories(db: Session):
+	return db.query(models.Category).all()
+

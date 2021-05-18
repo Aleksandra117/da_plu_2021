@@ -1,5 +1,5 @@
 from pydantic import BaseModel, PositiveInt, constr
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 
 class Shipper(BaseModel):
@@ -34,5 +34,25 @@ class SupplierExtended(BaseModel):
     HomePage: Optional[str] = None
     class Config:
         orm_mode = True
+
+
+
+class Category(BaseModel):
+    CategoryID: PositiveInt
+    CategoryName: Optional[constr(max_length = 15)]
+
+    class Config:
+        orm_mode = True
+
+
+class SupplierWithProduct(BaseModel):
+    ProductID: PositiveInt
+    ProductName: constr(max_length=40)
+    Category: Category
+    Discontinued: int
+
+    class Config:
+        orm_mode = True
+
 
 
