@@ -47,8 +47,6 @@ class SupplierCreate(BaseModel):
     PostalCode: Optional[constr(max_length=10)]
     Country: Optional[constr(max_length=15)]
     Phone: Optional[constr(max_length=24)]
-    Fax: Optional[constr(max_length=24)] = None
-    HomePage: Optional[str] = None
     class Config:
         orm_mode = True
 
