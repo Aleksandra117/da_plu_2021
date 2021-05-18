@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
+from sqlalchemy import func
 
 import models
+import schemas
 
 
 def get_shippers(db: Session):
@@ -28,4 +30,13 @@ def get_supplier_and_products(db: Session, supplier_id: int):
 
 def get_categories(db: Session):
 	return db.query(models.Category).all()
+
+def create_supplier(db: Session, supplier_from_msg: schemas.SupplierCreate):
+    max_id = db.query(func.max(models.Supplier.SupplierID)).scalar()
+    supplier_from_msg.SupplierID = max_id + 1
+    db_sup_from_msg = models.Supplier(**supplier_from_msg.dict())
+    db.add(db_sup_from_msg)
+    db.commit()
+    db.refresh(db_sup_from_msg)
+    return get_supplier(db, supplier_from_msg.SupplierID)
 

@@ -48,3 +48,12 @@ async def get_supplier_and_products(supplier_id: PositiveInt, db: Session=Depend
 async def get_categories(db: Session = Depends(get_db)):
     return crud.get_categories(db)
 
+
+@router.post("/suppliers", response_model = schemas.SupplierExtended, status_code = 201)
+def create_supplier(supplier_from_msg: schemas.SupplierCreate, db: Session = Depends(get_db)):
+    db_created_supplier = crud.create_supplier(db, supplier_from_msg)
+    return db_created_supplier
+
+
+
+
