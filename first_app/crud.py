@@ -24,19 +24,21 @@ def get_supplier(db: Session, supplier_id: int):
     )
 
 def get_supplier_and_products(db: Session, supplier_id: int):
-	return (
-		db.query(models.Product).filter(models.Product.SupplierID == supplier_id).order_by(desc(models.Product.ProductID)).all()
-	)
+    return (
+        db.query(models.Product).filter(models.Product.SupplierID == supplier_id).order_by(desc(models.Product.ProductID)).all()
+    )
 
 def get_categories(db: Session):
-	return db.query(models.Category).all()
+    return db.query(models.Category).all()
 
 def create_supplier(db: Session, supplier_from_msg: schemas.SupplierCreate):
     max_id = db.query(func.max(models.Supplier.SupplierID)).scalar()
-    supplier_from_msg.SupplierID = max_id + 1
-    db_sup_from_msg = models.Supplier(**supplier_from_msg.dict())
+    id_free = max_id + 1
+    db_sup_from_msg = models.Supplier(SupplierID = id_free, CompanyName = supplier_from_msg.CompanyName, ContactName = supplier_from_msg.ContactName,
+        ContactTitle = supplier_from_msg.ContactTitle, Address = supplier_from_msg.Address, City = supplier_from_msg.City, PostalCode = supplier_from_msg.PostalCode,
+        Country = supplier_from_msg.Country, Phone = supplier_from_msg.Phone)
+        
     db.add(db_sup_from_msg)
     db.commit()
-    db.refresh(db_sup_from_msg)
-    return get_supplier(db, supplier_from_msg.SupplierID)
+    return db_sup_from_msg
 

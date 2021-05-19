@@ -38,7 +38,6 @@ class SupplierExtended(BaseModel):
 
 
 class SupplierCreate(BaseModel): 
-    SupplierID: PositiveInt = 0
     CompanyName: constr(max_length=40)
     ContactName: Optional[constr(max_length=30)]
     ContactTitle: Optional[constr(max_length=30)]
