@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
-import crud, schemas
+import crud, schemas, models
 from database import get_db
 
 router = APIRouter()
@@ -55,5 +55,13 @@ def create_supplier(supplier_from_msg: schemas.SupplierCreate, db: Session = Dep
     return db_created_supplier
 
 
+@router.delete("/suppliers/{supplier_id}", status_code = 204)
+def delete_supplier(supplier_id = PositiveInt, db: Session=Depends(get_db)):
+    s_id = db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id)
+    is_id = db.query(s_id.exists()).scalar()
+    if not is_id:
+        raise HTTPException(404)
+    else:
+        crud.delete_supplier(db, supplier_id)
 
 

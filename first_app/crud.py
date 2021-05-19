@@ -42,3 +42,6 @@ def create_supplier(db: Session, supplier_from_msg: schemas.SupplierCreate):
     db.commit()
     return db_sup_from_msg
 
+def delete_supplier(db: Session, supplier_id: int):
+    db_deleted = db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id).delete()
+    db.commit()
